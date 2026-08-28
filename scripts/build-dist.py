@@ -39,10 +39,13 @@ def strip_frontmatter(text: str) -> str:
 
 
 def _write_entry(zf: zipfile.ZipFile, arc: str, data: bytes) -> None:
-    # 确定性构建：固定时间戳与权限位，保证内容不变时 zip 字节完全一致（CI 可 diff 校验）
+    # 确定性构建：内容不变时 zip 字节完全一致，CI 才能做 diff 校验。
+    # 必须显式固定 create_system（CPython 默认 win32=0 / linux=3）；
+    # 用 STORED 而非 DEFLATED，避免不同平台 zlib 版本的压缩输出差异（包体仅几十 KB）。
     zi = zipfile.ZipInfo(arc, date_time=(1980, 1, 1, 0, 0, 0))
+    zi.create_system = 0
     zi.external_attr = 0o644 << 16
-    zi.compress_type = zipfile.ZIP_DEFLATED
+    zi.compress_type = zipfile.ZIP_STORED
     zf.writestr(zi, data)
 
 
