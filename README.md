@@ -1,10 +1,10 @@
 # AI PM SkillKit — AI 产品经理方法论工具包
 
-![Skills](https://img.shields.io/badge/Skills-11-blue)
+![Skills](https://img.shields.io/badge/Skills-12-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Platform](https://img.shields.io/badge/Platform-Aily%20%2F%20Any%20Skill%20Runner-orange)
 
-> 11 个开箱即用的 AI 产品经理方法论 Skill，覆盖用户研究、产品设计、数据分析、求职发展四大类。每个 Skill 包含完整工作流、输出模板、提示词合集和实战案例，遵循单一职责原则。
+> 12 个开箱即用的 AI 产品经理方法论 Skill，覆盖用户研究、产品设计、数据分析、求职发展四大类，外加 1 个 Skill 质量审计基建工具。每个 Skill 包含完整工作流、输出模板、提示词合集和实战案例，遵循单一职责原则。
 
 ---
 
@@ -78,6 +78,12 @@ AI PM SkillKit 是一套为 AI 产品经理打造的方法论工具包。每个 
 | **[interview-retro](skills/interview-retro/)** · 面试复盘 | 漏斗思维诊断求职转化率 | 面试复盘、面试挂了、求职转化率、漏斗复盘、一面挂 | 求职漏斗四层诊断 + 复盘三步法 + 短板分类 |
 | **[script-polish](skills/script-polish/)** · 逐字稿打磨 | 面试回答逐句诊断与口语化打磨 | 逐字稿、面试稿、打磨回答、表达优化、话术 | 6 类问题诊断 + 四段式重构 + 多版本时长控制 |
 
+### 🛠 基建类（1 个）
+
+| Skill 名称 | 用途 | 触发关键词 | 核心方法论 |
+|-----------|------|-----------|-----------|
+| **[skill-quality-checker](skills/skill-quality-checker/)** · Skill 质量审计 | 8 维度系统化审计 Skill 质量，输出评分报告与改进清单 | 检查skill、审计skill、skill质量、skill评分、skill体检 | 8 维度审计框架 + 5 级评分 + 红线一票否决 + 方法论来源对照（见 `methodology-sources.md`） |
+
 ---
 
 ## 这些 Skill 怎么验证的
@@ -99,7 +105,7 @@ AI PM SkillKit 是一套为 AI 产品经理打造的方法论工具包。每个 
 
 ### 方式一：直接安装 .skill 文件（推荐）
 
-1. 从 [`dist/`](dist/) 目录下载需要的 `.skill` 文件
+1. 从 [`dist/`](dist/) 目录下载需要的 `.skill` 文件（12 个单包 + 1 个求职四合一包 `ai-pm-job-hunting.skill`）
 2. 在支持 Skill 的平台（如 Aily）中导入安装
 3. 直接用自然语言触发，例如：
    - "帮我做一份竞品调研"
@@ -117,9 +123,10 @@ AI PM SkillKit 是一套为 AI 产品经理打造的方法论工具包。每个 
 ### 重新打包 Skill
 
 ```bash
-cd skills/
-zip -r ../dist/skill-name.skill skill-name/
+python scripts/build-dist.py   # 从 skills/ 重新生成 dist/ 下全部包（12 单包 + 求职四合一包）
 ```
+
+> **注意**：`dist/` 全部由脚本生成，请勿手动打包上传——历史上曾出现 dist 与源码脱节（旧包仍是"三维可行性评估"）。每次修改 SKILL.md 或 references 后必须重跑脚本并提交；CI 会自动校验 dist 与 skills 目录是否同步。
 
 ---
 

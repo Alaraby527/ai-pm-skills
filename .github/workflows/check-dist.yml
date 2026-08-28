@@ -1,0 +1,22 @@
+name: check-dist-sync
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 重新生成 dist 并校验同步
+        run: |
+          python scripts/build-dist.py
+          if ! git diff --exit-code -- dist/; then
+            echo "::error::dist/ 与 skills/ 不同步：请本地运行 python scripts/build-dist.py 后提交"
+            exit 1
+          fi
