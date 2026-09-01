@@ -1,0 +1,17 @@
+name: check-dist-sync
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 校验 dist 与 skills 内容同步
+        run: python scripts/check-dist.py
