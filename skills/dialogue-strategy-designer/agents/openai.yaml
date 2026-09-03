@@ -1,0 +1,6 @@
+interface:
+  display_name: "Dialogue Strategy Designer"
+  short_description: "Select models and draft scenario dialogue from research"
+  default_prompt: "Use $dialogue-strategy-designer to select a dialogue model from business research and draft executable scripts."
+policy:
+  allow_implicit_invocation: true

@@ -1,10 +1,10 @@
 # AI PM SkillKit — AI 产品经理方法论工具包
 
-![Skills](https://img.shields.io/badge/Skills-11-blue)
+![Skills](https://img.shields.io/badge/Skills-12-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Platform](https://img.shields.io/badge/Platform-Aily%20%2F%20Any%20Skill%20Runner-orange)
 
-> 11 个开箱即用的 AI 产品经理方法论 Skill，覆盖用户研究、产品设计、数据分析、求职发展四大类。每个 Skill 包含完整工作流、输出模板、提示词合集和实战案例，遵循单一职责原则。
+> 12 个开箱即用的 AI 产品经理方法论 Skill，覆盖用户研究、产品设计、数据分析、求职发展四大类。每个 Skill 包含完整工作流、输出模板、提示词合集和实战案例，遵循单一职责原则。
 
 ---
 
@@ -69,6 +69,12 @@ AI PM SkillKit 是一套为 AI 产品经理打造的方法论工具包。每个 
 |-----------|------|-----------|-----------|
 | **[data-analysis](skills/data-analysis/)** · 数据分析 | 含 AI 质量指标的产品数据分析方法 | 数据分析、数据异常、漏斗分析、用户分层、RFM分析、AB测试、幻觉率 | 四层指标金字塔 + 三大模型组合 + RFM 分层 + AB 测试设计 |
 
+### 📞 对话策略类（1 个）
+
+| Skill 名称 | 用途 | 触发关键词 | 核心方法论 |
+|-----------|------|-----------|-----------|
+| **[dialogue-strategy-designer](skills/dialogue-strategy-designer/)** · 对话策略设计 | 根据业务调研选择沟通模型，设计阶段化策略并生成可执行话术 | 对话策略、外呼话术、沟通模型、销售话术、客服话术、异议处理 | 场景判定 × 沟通模型 × 心理学策略 × 阶段化蓝图 |
+
 ### 💼 求职发展类（4 个）
 
 | Skill 名称 | 用途 | 触发关键词 | 核心方法论 |
@@ -127,6 +133,7 @@ AI PM SkillKit 是一套为 AI 产品经理打造的方法论工具包。每个 
 | data-analysis | tv-buying 25 条评测、invoice 36 条规则回归 | 加入 AI 专属指标（幻觉率、任务完成率、Token 成本） |
 | resume-jd-align | 自己和同学的简历优化 | 三梯队投递策略经过 50+ 岗位投递验证 |
 | interview-prep | 秋招面试准备 | 四大题型框架在模拟面试中反复打磨 |
+| dialogue-strategy-designer | B2B 续费回访场景 | 从场景判定到 LEARN/FAB 选型，验证分支、退出路径和事实核验 |
 
 ---
 
@@ -140,6 +147,7 @@ AI PM SkillKit 是一套为 AI 产品经理打造的方法论工具包。每个 
    - "帮我做一份竞品调研"
    - "帮我优化简历，JD 是…"
    - "DAU 跌了，帮我分析一下原因"
+   - "根据这份业务调研，帮我设计一套外呼对话策略"
 
 ### 方式二：源码使用
 
