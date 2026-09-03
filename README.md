@@ -54,6 +54,20 @@ Workflow 会按需调用对应 Skill：
 - **职业发展场景**：需要简历、投递或面试准备时，再使用 AI 产品经理求职兵法
 
 因此，单个 Skill 仍然可以独立使用；当任务是完整项目时，优先调用 Workflow，由 Workflow 负责阶段编排、材料复用和质量检查。
+## Skill 创建原则：先定标准，再写内容
+
+你不需要先创建一个低质量 Skill，再依赖审核把它救回来。正确的生产方式是把质量标准前置为 Skill 的设计输入、验收条件和发布门槛：
+
+[**Skill 创建 Workflow：先定标准，再写内容 →**](workflows/skill-creation-workflow/SKILL.md)
+
+创建流程应当是：
+
+```text
+定义职责边界 → 写触发/输入/输出契约 → 设计工作流与方法论
+      → 设计异常兜底 → 用正例/边界例/失败例试跑 → 预检通过 → 独立审计 → 发布
+```
+
+`skill-quality-checker` 的定位是**独立审计与回归检查**，不是默认的“先写烂、再返工”环节。新 Skill 在进入审计前，必须先通过创建 Workflow 的最低质量门槛。
 ## 安装与使用
 
 ### 方式一：下载 `.skill` 文件
@@ -116,8 +130,10 @@ ai-pm-skills/
 │   ├── script-polish/
 │   └── skill-quality-checker/
 ├── workflows/                             # 跨 Skill 的固定工作流
-│   └── ai-pm-project-workflow/
-│       └── SKILL.md                       # AI PM 产品项目闭环编排
+│   ├── ai-pm-project-workflow/
+│   │   └── SKILL.md                       # AI PM 产品项目闭环编排
+│   └── skill-creation-workflow/
+│       └── SKILL.md                       # Skill 创建前质量门槛
 ├── dist/                                  # 可上传安装的 .skill 包
 └── .gitignore
 ```
@@ -196,6 +212,7 @@ ai-pm-skills/
 ---
 
 如果你发现 Skill 的触发条件、模板或案例存在问题，欢迎在 [Issues](https://github.com/Alaraby527/ai-pm-skills/issues) 中反馈。
+
 
 
 
