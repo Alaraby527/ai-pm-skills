@@ -6,7 +6,7 @@
 
 ## 这是什么
 
-AI PM SkillKit 不是一组零散的 Prompt，而是 14 个可以独立使用的 AI 产品经理 Skill，以及 1 个将它们串成项目闭环的 Workflow。每个 Skill 都明确：
+AI PM SkillKit 不是一组零散的 Prompt，而是 15 个可以独立使用的 AI 产品经理 Skill，以及 1 个将它们串成项目闭环的 Workflow。每个 Skill 都明确：
 
 - **什么时候用**：用触发词快速定位方法
 - **先做什么、再做什么**：按步骤推进，而不是直接生成结论
@@ -35,6 +35,7 @@ AI PM SkillKit 不是一组零散的 Prompt，而是 14 个可以独立使用的
 | 求职发展 | 面试复盘 | [`interview-retro`](skills/interview-retro/SKILL.md) | 面试未通过或需要定位求职转化短板时 | 面试还原、漏斗诊断、问题定位、改进清单 |
 | 求职发展 | 逐字稿打磨 | [`script-polish`](skills/script-polish/SKILL.md) | 已有面试录音或逐字稿，需要优化表达时 | 逐句诊断、结构化回答、多时长版本 |
 | 质量治理 | Skill 质量检测 | [`skill-quality-checker`](skills/skill-quality-checker/SKILL.md) | 需要审计 Skill 的可调用性、规范性和完整性时 | 质量评分、问题清单、改进方案、差距分析 |
+| 日常管理 | 工作日报 | [`daily-report`](skills/daily-report/SKILL.md) | 需要整理每日工作进展、效果、问题处理、卡点和明日计划时 | 结构化日报、问题处理、学习内容融合、明日计划 |
 
 ### 固定流程：封装为一个 Workflow
 
