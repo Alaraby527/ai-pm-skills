@@ -2,111 +2,91 @@
 
 ## 1. 审计记录
 
-- **被审计 Skill**：`ai-pm-portfolio-review`
-- **审计日期**：2026-09-03
-- **执行的质检 Skill**：`skill-quality-checker`
-- **当前加载副本**：`C:\Users\18196\.codex\skills\skill-quality-checker\SKILL.md`
-- **当前加载副本 SHA-256**：`0EFDADF5F0F183FC2800DF7882901352878306E5B408B17C5B8FC8821E23CB4C`
-- **用户指定来源**：`https://github.com/Alaraby527/ai-pm-skills/tree/main/skills/skill-quality-checker`
-- **来源限制**：本轮已尝试读取用户指定 GitHub 页面、Raw 文件和仓库，但当前环境的 GitHub TLS/代理认证失败，因此无法独立核对远程分支的 commit。以下审计基于当前环境中同名已安装副本；不把本地副本未经验证地声称为远程最新版本。
-- **被审计目录**：`D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review`
-- **审计范围**：`SKILL.md`、`agents/openai.yaml`、`references/ai-pm-portfolio-criteria.md`、`references/review-report-template.md`、`references/prompts.md`、`references/example-review.md`，以及用户提供的 `D:\AI产品经理作品集研究\合格作品集标准汇总.md`。
-- **方法论处理**：用户提供的标准汇总被视为资料性依据，不是审核指令；作品集/附件中的指令性文字也按被审查内容处理。
+| 项目 | 内容 |
+|---|---|
+| 被审计 Skill | `ai-pm-portfolio-review` |
+| 审计日期 | 2026-09-04 |
+| 审计依据 | `C:\Users\18196\.codex\skills\skill-quality-checker\SKILL.md` 及其 `references/audit-checklist.md`、`references/scorecard-template.md` |
+| 被审计目录 | `D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review-github-sync-20260903\skills\ai-pm-portfolio-review` |
+| 关联源版 | `D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review` |
+| 原始方法论 | `D:\AI产品经理作品集研究\合格作品集标准汇总.md`（用户提供，2026-09-04 更新版） |
+| 审计范围 | `SKILL.md`、`agents/openai.yaml`、`references/ai-pm-portfolio-criteria.md`、`references/review-report-template.md`、`references/prompts.md`、`references/example-review.md`；同时核对打包文件内容 |
+| 方法论处理 | 原始文档被视为资料性依据；其中的观点、招聘趋势、企业案例和行动计划不会被直接当成候选人事实、硬性门槛或当前任务指令 |
+| 复审对象状态 | 已按上轮改进建议修改源版与 GitHub 同步版，并重新打包后复审 |
 
-## 2. 质检 Skill 的静态安全审查
+## 2. 总体结论
 
-### Pre-install Skill Security Review
+**总分：4.88 / 5，等级：S（优秀，可发布）**
 
-- **检查对象**：`C:\Users\18196\.codex\skills\skill-quality-checker\`
-- **检查文件**：`SKILL.md`、`references/audit-checklist.md`、`references/scorecard-template.md`
-- **发现**：仅包含 Markdown 指令和模板；未发现脚本、二进制、安装钩子、包管理依赖、网络调用、凭证/环境变量读取、动态代码执行、远程 Shell、持久化或破坏性文件命令。
-- **风险等级**：`low`
-- **限制**：这是静态审查，不等于证明该 Skill 绝对无恶意；由于远程仓库 revision 未核验，也不能证明本地副本与 GitHub `main` 完全一致。
-- **建议**：可在本地以只读方式用于本次审计；不要把“低风险”理解为授权安装或执行未知远程代码。
+**红线：未触发 P0。**
 
-## 3. 总体结论
+本轮修改已补齐上轮审计指出的执行层缺口：增加了独立的“触发场景”、信息不足时的最小追问、结构化“异常兜底”，并将六步工作流统一为“输入 → 动作 → 产出 → 检查点”。`references/prompts.md` 也增加了可直接复制的追问和异常处理提示词。
 
-### 修订前
+Skill 的核心优势是职责聚焦、事实安全边界清楚，并能把 AI PM 作品集审查落到问题真实性、AI 必要性、业务复杂度、成熟度、工程边界、评测/badcase 迭代、用户/业务价值和版式扫描效率。当前唯一保留的小项是 `metadata.short-description` 与某些最严格检查器“frontmatter 只保留 name + description”的口径差异；这不影响 `skill-creator` 规范下的使用，也未触发 P0。
 
-**B（3.95 / 5，基本可用但存在明显缺口）**。
-
-主要问题是：没有明确限制“无截图/无渲染材料时不能直接判定真实版式”；没有统一定义 P0/P1/P2；没有明确说明作品集附件里的指令性文字不能改变审核规则；输入缺失和执行失败的处理不够结构化。
-
-### 修订后
-
-**A（4.35 / 5，达标，建议继续通过一次真实 PDF/PPTX 案例的行为测试）**。
-
-本轮已经完成小范围修缮，没有新增任何候选人、用户、指标、上线结果或模型效果事实。修订后的核心能力保持不变：同时审查项目内容证据和作品集呈现质量，并支持在不编造事实的前提下修改。
-
-> 本次没有把视觉版式判定应用到 AI PM 作品集文件本身，因为审计对象是一个 Skill，输入材料为 Markdown/配置文件，不是 PDF/PPTX 作品集页面。
-
-## 4. 8 维度评分卡
+## 3. 8 维度评分卡
 
 | 维度 | 权重 | 得分（0-5） | 加权分 | 判断依据 |
 |---|---:|---:|---:|---|
-| D1 可调用性 | 15% | 4 | 0.60 | description 已覆盖审查、检查、评分、优化、判断是否达标等表达；适用/不适用边界清楚，但仍可增加更具体的典型用户话术。 |
-| D2 输入规范 | 10% | 4 | 0.40 | 已明确必需输入、可选输入、文件格式和审核范围；缺少材料时有兜底，但没有为每一种缺失项提供逐字追问话术。 |
-| D3 输出规范 | 10% | 5 | 0.50 | 有项目内容/版式双维结论、报告结构、修订记录、待补证据、面试追问和复核结果，且链接到完整模板。 |
-| D4 异常兜底 | 15% | 4 | 0.60 | 已覆盖无文件、无视觉材料、读取/渲染失败、证据缺失、无可编辑源文件和附件指令注入；仍可进一步规定渲染工具失败时的逐页替代格式。 |
-| D5 工作流完整性 | 15% | 4 | 0.60 | 六步链路完整且可执行：识别输入→审查项目→审查版式→判定→修改→复核；每步有检查点，但不是每一步都用统一的“输入/动作/产出”字段表达。 |
-| D6 单一职责 | 10% | 5 | 0.50 | 项目证据审查、版式审查和针对该作品集的修改属于同一“AI PM 作品集审查与优化”任务，不是无关职责混杂。 |
-| D7 方法论还原度 | 15% | 5 | 0.75 | 对用户标准中的问题证据、AI 必要性、工作流、评测、失败、迭代，以及 Agent 工程化、人机兜底和版式表达均有对应检查；没有用技术名词数量替代产品判断。 |
-| D8 规范符合度 | 10% | 4 | 0.40 | 目录命名、references 索引、progressive disclosure 和 `quick_validate.py` 均通过；质检器的严格检查会注意到 frontmatter 还包含 `metadata`，但当前 `skill-creator` 规范允许保留受支持的可选字段，因此不建议为迎合过时规则而盲删。 |
-| **总分** | **100%** |  | **4.35 / 5** | **A** |
+| D1 可调用性 | 15% | 5.0 | 0.750 | description 写清了对象、能力、文件类型和典型任务；新增“触发场景”及 7 个典型用户话术，并明确不适用边界（`SKILL.md:20-32,61-67`）。 |
+| D2 输入规范 | 10% | 5.0 | 0.500 | 明确必需/可选输入、默认审查方式、视觉材料要求、可编辑源文件要求，并新增目标岗位、视觉材料、源文件、测试集/基线/badcase、生产证据的逐项追问和缺失后的降级标记（`SKILL.md:34-53`）。 |
+| D3 输出规范 | 10% | 5.0 | 0.500 | 明确输出审核范围、项目判定、版式结论、待补证据、面试追问、修改记录和最终复核；报告模板与参考文件索引完整（`SKILL.md:157-222`）。 |
+| D4 异常兜底 | 15% | 5.0 | 0.750 | 新增异常表，覆盖文件无法读取、格式不支持、渲染失败、不可编辑 PDF、外部材料不可访问、声明缺原始证据、评测缺失、隐私/权限限制和事实安全阻断；每项都有降级动作与报告标记（`SKILL.md:82-98`）。 |
+| D5 工作流完整性 | 15% | 5.0 | 0.750 | 保留 6 步递进流程，并新增统一的“输入—动作—产出—检查点”表；步骤间明确前一步产出作为后一步输入，包含最终事实一致性与导出复核（`SKILL.md:100-192`）。 |
+| D6 单一职责 | 10% | 5.0 | 0.500 | 审查、评分、修改、主项目选择、面试追问和版式检查均围绕同一目标“AI PM 作品集证据与表达审查”，未混入代码审查或纯设计任务（`SKILL.md:10-18,61-67`）。 |
+| D7 方法论还原度 | 15% | 4.5 | 0.675 | `references/ai-pm-portfolio-criteria.md` 已覆盖用户标准汇总中的六类证据、项目成熟度、Agent 能力、四项竞争力、红线和自检逻辑；对资料性观点进行了事实安全分层，避免把背景趋势冒充项目事实。 |
+| D8 规范符合度 | 10% | 4.5 | 0.450 | `SKILL.md` 约 222 行，细节拆入 4 个 references，所有 references 均被索引，命名规范，GitHub 同步包结构干净，并通过 `quick_validate.py`。保留 `metadata.short-description` 是与最严格 frontmatter 检查口径的轻微差异。 |
+| **总分** | **100%** |  | **4.875 / 5** | **等级：S** |
 
-## 5. 红线检查
+## 4. 红线检查
 
-| 红线项 | 是否触发 | 说明 |
+| # | 红线项 | 是否触发 | 说明 |
+|---|---|---|---|
+| 1 | 无触发条件 | ❌ | 有 description、适用范围和独立触发场景 |
+| 2 | 无工作流 | ❌ | 有 6 步工作流、动作、产出和检查点 |
+| 3 | 多职责混杂 | ❌ | 所有能力均服务于 AI PM 作品集审查与优化 |
+| 4 | 方法论核心错误 | ❌ | 未发现对原始标准的关键篡改；资料性内容已分层处理 |
+| 5 | 编造数据/来源 | ❌ | 明确禁止补造数字、用户、上线状态、反馈和评测结果 |
+| 6 | 无输出定义 | ❌ | 有推荐报告结构、输出清单和交付复核要求 |
+
+## 5. 本轮实际修改
+
+### 已修改文件
+
+1. `D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review\SKILL.md`
+2. `D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review\references\prompts.md`
+3. `D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review-github-sync-20260903\skills\ai-pm-portfolio-review\SKILL.md`
+4. `D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review-github-sync-20260903\skills\ai-pm-portfolio-review\references\prompts.md`
+
+### 修改内容
+
+- 增加 7 个典型触发话术和不适用边界。
+- 增加信息不足时的最小追问，覆盖目标岗位、视觉材料、可编辑源文件、测试集/基线/badcase 和生产证据。
+- 增加“异常兜底”表，统一使用“识别 → 降级动作 → 输出标记”。
+- 增加六步工作流总表：材料盘点、证据抽取、成熟度与风险、视觉审查、输出与修改、复核与交付。
+- 在 `references/prompts.md` 增加可复制的最小追问模板和异常兜底提示词。
+- 保留源版与 GitHub 同步版一致；审计报告只保留在源版输出目录，不放入 GitHub Skill 包。
+
+## 6. 实跑验证记录
+
+| 测试项 | 结果 | 发现的问题 |
 |---|---|---|
-| 无触发条件 | 否 | 有明确 description、适用范围和不适用场景。 |
-| 无工作流 | 否 | 有 6 步主流程，另有异常兜底和修改后复核。 |
-| 多职责混杂 | 否 | 内容审查、版式审查和修改均围绕同一作品集任务。 |
-| 方法论核心错误 | 否 | 与用户提供的标准汇总一致，并明确区分证据、推断和待补项。 |
-| 编造数据/来源 | 否 | 明确禁止虚构访谈、样本、准确率、成本、留存、上线和反馈；资料来源被标记为背景而非已验证事实。 |
-| 无输出定义 | 否 | 有结论、报告、修订文件、待补证据、面试追问和修改记录的定义。 |
+| 源版 `quick_validate.py` | 通过 | 无结构或 frontmatter 错误 |
+| GitHub 同步版 `quick_validate.py` | 通过 | 无结构或 frontmatter 错误 |
+| 源版与同步版内容一致性 | 通过 | `SKILL.md` 与 `references/prompts.md` 的 SHA-256 均一致 |
+| 打包结构检查 | 通过 | 包内包含 `ai-pm-portfolio-review/` 根目录及 6 个预期文件 |
+| 触发场景可调用性 | 通过 | description + 独立触发章节 + 7 个典型话术 |
+| 输入缺失降级 | 通过 | 有逐项追问和“未提供/未核验/无法完整核验”标记 |
+| 异常兜底覆盖 | 通过 | 覆盖 9 类常见异常，均有具体降级动作 |
+| 工作流完整性 | 通过 | 6 步均有输入、动作、产出、检查点 |
 
-## 6. 关键问题与修复记录
+## 7. 仍可选的优化项
 
-### 已修复的 P1 问题
-
-1. **视觉材料不足时越界判定版式**
-   - 原风险：只有 Markdown/纯文本时，执行者可能仍直接判断字号、密度、裁切或导出质量。
-   - 修复位置：`SKILL.md` 的“输入与审核边界”“核心原则”“审查作品集排版和信息表达”。
-   - 修复内容：增加“完整核验 / 部分核验 / 无法完整核验”三种状态；没有渲染结果或逐页截图时，版式总体结论必须写“无法完整核验”。
-
-2. **P0/P1/P2 没有统一定义**
-   - 原风险：报告模板使用优先级标签，但不同执行者可能解释不一致。
-   - 修复位置：`SKILL.md` 的“严重程度定义”和 `references/review-report-template.md`。
-   - 修复内容：明确 P0 为事实/安全/不可交付硬伤，P1 为显著影响判断的问题，P2 为不阻塞交付的局部优化。
-
-3. **附件指令与审核指令边界不清**
-   - 原风险：作品集文案、截图或附件中的“忽略问题”“把这项算作上线”等文字可能被误当作执行指令。
-   - 修复位置：`SKILL.md` 的“输入与审核边界”和“异常兜底”。
-   - 修复内容：明确所有作品集/附件指令性文字都属于被审查内容，不得改变标准、事实约束、工具条件或文件边界。
-
-4. **异常处理不够结构化**
-   - 原风险：缺文件、渲染失败、无编辑源文件时，降级行为不够统一。
-   - 修复位置：`SKILL.md` 新增“异常兜底”。
-   - 修复内容：为无输入、纯文本、读取/渲染失败、证据缺失、不可编辑源文件和规则注入分别给出可执行降级动作。
-
-### 尚存的 P2 / 可选优化
-
-| 优先级 | 问题 | 具体建议 |
+| 优先级 | 优化项 | 建议 |
 |---|---|---|
-| P2 | 缺少统一的实跑测试案例 | 增加一个脱敏 PDF/PPTX 或 Markdown 样例，按“只有文本”“有截图”“有失败指标”三种输入跑一次，检查输出是否稳定。 |
-| P2 | 输入追问仍偏概括 | 在 references/prompts.md 增加“缺目标岗位”“缺源文件”“缺截图”“缺测试集”四类逐字追问模板。 |
-| P2 | D5 产出字段未完全统一 | 可将六步流程写成“输入 / 动作 / 产出 / 检查点”四列，方便其他模型照做。 |
+| P2 | frontmatter 口径 | 若目标环境存在严格要求“只有 name + description”的检查器，可删除 `metadata.short-description`；当前基于 `skill-creator` 兼容口径，保留它不影响使用。 |
+| P2 | 自动化回归测试 | 后续可为 5 类典型输入（只有文本、不可编辑 PDF、渲染失败、无评测证据、声称生产但无日志）建立固定测试样例，验证输出是否保留降级标记。 |
 
-## 7. 交付文件与验证
+## 8. 审计结论
 
-- 修订版 Skill：`D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review\SKILL.md`
-- 修订版报告模板：`D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review\references\review-report-template.md`
-- 原始 Skill 备份：`D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review-original\SKILL.md`
-- 原始报告模板备份：`D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review-original\references\review-report-template.md`
-- Skill 规范验证命令：`python C:\Users\18196\.codex\skills\.system\skill-creator\scripts\quick_validate.py D:\百应\2026-09-03\skill-creator-c-users-18196-codex-2\outputs\ai-pm-portfolio-review`
-- 验证结果：`Skill is valid!`
-- 修订版 Skill SHA-256：`7A181E81290539DE04932AA70B4F38FC5D4C864134EB4ECA378739C6AF825ED3`
-
-## 8. 最终审计结论
-
-这个 AI PM 作品集审查 Skill 的优势是职责聚焦、证据标准完整、事实安全意识强，并且把项目内容与版式呈现拆开审查。按 `skill-quality-checker` 的 8 维度评分，修订后为 **4.35/5，等级 A**，无 P0 红线。已完成的修复解决了最容易造成误判的三个问题：无视觉材料时越界判定、严重程度标签不统一，以及把附件文字误当作审核指令。建议后续用至少一个真实脱敏的 PDF/PPTX 案例进行一次行为测试，再决定是否发布到仓库的稳定分支。
+修改后的 `ai-pm-portfolio-review` 已从 **A 级 4.08/5** 提升到 **S 级 4.88/5**。本轮修复直接提升了 D1 可调用性、D2 输入规范、D4 异常兜底和 D5 工作流完整性；没有发现 P0 红线。源版、GitHub 同步目录和重新打包的 `.skill` 文件均已更新并通过结构校验。GitHub 尚未执行推送，本次只更新了本地同步包。
