@@ -120,10 +120,7 @@ ai-pm-skills/
 
 ## 源码与打包状态
 
-当前 `dist/` 中有 11 个历史打包文件：
-
-- 10 个与当前源码或 Workflow 对应
-- 1 个 `ai-pm-job-hunting.skill` 暂无对应源码目录，暂列为历史打包文件
+当前 `dist/` 中有 10 个已打包文件，均与当前保留的源码或 Workflow 对应。
 
 以下 Skill 当前有源码，但还没有对应的 `.skill` 包：
 
