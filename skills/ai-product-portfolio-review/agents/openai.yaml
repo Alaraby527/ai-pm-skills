@@ -1,0 +1,5 @@
+interface:
+  display_name: "AI PM Portfolio Review"
+  short_description: "Review AI PM portfolio evidence, maturity, and iteration"
+  default_prompt: "Review this AI PM portfolio using evidence-based criteria; label missing proof and do not invent facts."
+
