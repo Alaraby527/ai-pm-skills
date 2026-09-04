@@ -115,3 +115,10 @@ P0/P1/P2 问题：
 - [ ] 已给出最小修改动作、面试追问和验收条件。
 - [ ] 修改时保留原稿，并记录修改内容。
 
+
+## 配套参考文件
+
+- [ai-pm-portfolio-criteria.md](references/ai-pm-portfolio-criteria.md)：作品集审核标准与证据维度。
+- [example-review.md](references/example-review.md)：虚构审查示例，说明输出形态。
+- [prompts.md](references/prompts.md)：证据提取、成熟度判断、版式审查和事实安全改写提示词。
+- [review-report-template.md](references/review-report-template.md)：逐项目审核、版式审查和待补证据模板。
