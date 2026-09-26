@@ -6,7 +6,7 @@
 
 ## 这是什么
 
-AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 17 个独立 Skill 和 1 个项目 Workflow。
+AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 18 个独立 Skill 和 1 个项目 Workflow。
 
 每个 Skill 都包含：
 
@@ -40,7 +40,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [data-analysis](skills/data-analysis/SKILL.md) | 指标、漏斗、用户分层和异常诊断 |
+| [data-analysis](skills/data/data-analysis/SKILL.md) | 指标、漏斗、用户分层和异常诊断 |
 | [product-experience-report](skills/product-experience-report/SKILL.md) | 产品体验、五要素和体验问题分析 |
 
 ### 4. 审核、评估与质量控制
@@ -59,6 +59,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 | [interview-prep](skills/interview-prep/SKILL.md) | 项目深挖、行业认知、行为题和模拟面试准备 |
 | [interview-retro](skills/interview-retro/SKILL.md) | 面试复盘、问题归因、漏斗诊断和改进清单 |
 | [resume-jd-align](skills/resume-jd-align/SKILL.md) | 简历与 JD 对齐、关键词匹配和项目描述优化 |
+| [campus-apply-pipeline](skills/campus-apply-pipeline/SKILL.md) | 校招/实习投递全流程：读履历、四维评分排序、官方网申、回填主表置顶、双写看板 |
 
 ### 6. 日常工作与内容表达
 
@@ -106,7 +107,7 @@ ai-pm-skills/
 │   │   ├── ai-product-portfolio-review
 │   │   └── skill-quality-checker
 │   ├── 求职与面试执行
-│   │   └── interview-prep / interview-retro / resume-jd-align
+│   │   └── interview-prep / interview-retro / resume-jd-align / campus-apply-pipeline
 │   ├── 日常工作与内容表达
 │   │   └── daily-report / script-polish
 │   └── Skill 开发与维护
@@ -126,6 +127,7 @@ ai-pm-skills/
 
 ```text
 ai-product-portfolio-review
+campus-apply-pipeline
 daily-report
 interview-prep
 interview-retro
@@ -179,7 +181,7 @@ ai-pm-project-workflow
 - 触发条件是否清楚
 - 输入和输出是否定义
 - 工作流程是否完整
-- 异常情况是否有兜底
+- 异常情况有兜底
 - references 链接是否有效
 - README 分类和数量是否同步
 - 是否需要重新生成 `dist/` 打包文件
