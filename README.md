@@ -56,7 +56,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [interview-prep](skills/interview-prep/SKILL.md) | 项目深挖、行业认知、行为题和模拟面试准备 |
+| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陪练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、七类题库、模拟面试 |
 | [interview-retro](skills/interview-retro/SKILL.md) | 面试复盘、问题归因、漏斗诊断和改进清单 |
 | [resume-jd-align](skills/resume-jd-align/SKILL.md) | 简历与 JD 对齐、关键词匹配和项目描述优化 |
 | [campus-apply-pipeline](skills/campus-apply-pipeline/SKILL.md) | 校招/实习投递全流程：读履历、四维评分排序、官方网申、回填主表置顶、双写看板 |
@@ -121,7 +121,7 @@ ai-pm-skills/
 
 ## 源码与打包状态
 
-当前 `dist/` 中有 10 个已打包文件，均与当前保留的源码或 Workflow 对应。
+当前 `dist/` 中有 11 个已打包文件，均与当前保留的源码或 Workflow 对应。
 
 以下 Skill 当前有源码，但还没有对应的 `.skill` 包：
 
@@ -129,7 +129,6 @@ ai-pm-skills/
 ai-product-portfolio-review
 campus-apply-pipeline
 daily-report
-interview-prep
 interview-retro
 prompt-writing
 resume-jd-align
