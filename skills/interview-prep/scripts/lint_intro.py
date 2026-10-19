@@ -12,6 +12,10 @@ Checks performed:
     5. Quantitative evidence inside each hard story
     6. Filler words ("然后", "嗯", ...) left in the written script
     7. JD keyword coverage (only when --keywords is supplied)
+    8. AI-slop signatures (S1-S10 from references/anti-slop.md): meta-framing
+       opener, list-carrying argument, nominalization clusters, generic examples,
+       no first-person, prompt residue, hedge clusters, buzzword stuffing,
+       flattened uncertainty
 
 The script is read-only with respect to everything except its own report,
 performs no network access, and never modifies the input file.
@@ -56,6 +60,24 @@ EMPTY_BRAG_WORDS = [
 FILLER_WORDS = ["然后", "嗯", "就是说", "可能吧", "反正", "那个那个"]
 
 SLANG_WORDS = ["赋能", "抓手", "闭环", "打法", "颗粒度", "平台大", "技术氛围好"]
+
+# --- AI 味 / slop 检测词表（依据 references/anti-slop.md） ---
+S1_PATTERNS = [
+    r"接下来我将", r"我将从", r"从以下(?:几|三|四|五)个(?:方面|维度)",
+    r"下面我将", r"我将从(?:三|四)个", r"简单介绍一下自己",
+]
+S6_WORDS = ["总的来说", "综上所述", "以上就是我的", "希望有机会加入", "谢谢聆听", "感谢聆听", "望给予机会"]
+S3_PATTERNS = [
+    r"(?:进行|完成|实现|开展|推动)(?:了)?[^，。]{0,10}(?:的)?(?:赋能|优化|落地|打通|沉淀|升级|改造|建设|体系化)",
+    r"(?:实现了|完成了|形成了|构建了)[^，。]{0,8}(?:闭环|机制|体系|能力|价值)",
+]
+S4_WORDS = ["某公司", "一家公司", "某企业", "一个项目", "相关工作", "相关经验", "一些工作", "某平台", "负责相关"]
+ME_ACTION_PATTERN = r"我(?:先|就|当时|后来|把|改|拆|定|跑|做|协调|推动|砍|压|重新|发现|判断|坚持|说服|扛)"
+SLANG_WORDS_EXT = SLANG_WORDS + ["沉淀", "对齐", "心智", "护城河", "打法", "颗粒度", "价值转化", "生态位"]
+CONSTRAINT_WORDS = [
+    "限制", "约束", "只有", "没有", "缺", "不足", "代价", "踩坑", "踩过", "失败",
+    "推翻", "被否", "重来", "预算有限", "时间紧", "不会", "不懂", "盲区", "只能",
+]
 
 NUMBER_PATTERNS = [
     r"\d+\s*%", r"\d+\s*个百分点", r"\d+倍", r"从\s*[^\s，。]{1,10}\s*(?:到|降至|提升至|提升到)\s*[^\s，。]{1,10}",
@@ -228,6 +250,86 @@ def main() -> int:
             soft_warn += 1
             lines.append("⚠️ 未命中：%s" % "、".join(miss))
             lines.append("   - 目标：90 秒稿至少命中 3–5 个 JD 关键词，且每个词都在提示面试官可以追问")
+    lines.append("")
+
+    # 8. AI 味 / slop 签名扫描（依据 references/anti-slop.md）
+    lines.append("## 8. AI 味检测（Slop 签名，依据 references/anti-slop.md）")
+    lines.append("")
+
+    body = text
+    n_chars = max(cjk_count(body), 1)
+    tier1, tier2 = [], []
+
+    # S1 元框架开场
+    s1_hits = [p for p in S1_PATTERNS if re.search(p, body[:200])]
+    if s1_hits:
+        tier1.append(("S1", "元框架开场", "首段出现「接下来我将/我将从…方面」——删掉，第一句直接给标签或结论"))
+
+    # S2 列表撑论点（首先/其次/最后 或 1.2.3. 撑起全篇）
+    if re.search(r"首先", body) and re.search(r"其次|再者", body) and re.search(r"最后|综上", body):
+        tier1.append(("S2", "列表撑论点", "全篇靠「首先/其次/最后」支撑——删掉分点，改成两件具体的事"))
+
+    # S6 提示词残留
+    s6_hits = sorted({w for w in S6_WORDS if w in body})
+    if s6_hits:
+        tier1.append(("S6", "提示词残留", "发现 %s——这些是模型收尾腔，人不会这么说；结尾换成钩子" % "、".join(s6_hits)))
+
+    # S3 名词化堆砌（每 100 字 >3）
+    s3_count = sum(len(re.findall(p, body)) for p in S3_PATTERNS)
+    if s3_count / (n_chars / 100.0) > 3:
+        tier2.append(("S3", "名词化堆砌", "抽象名词化结构约 %.1f 处/100 字（阈值 3）——把「进行了…的赋能」改成「我改了什么、结果变成多少」" % (s3_count / (n_chars / 100.0))))
+
+    # S4 泛化例子
+    s4_hits = sorted({w for w in S4_WORDS if w in body})
+    if s4_hits:
+        tier2.append(("S4", "泛化例子", "发现 %s——必须给出具体公司/产品名、数字、时间" % "、".join(s4_hits)))
+
+    # S5 无第一人称（找不到「我 + 具体动作」）
+    if not re.search(ME_ACTION_PATTERN, body):
+        tier2.append(("S5", "无第一人称", "通篇找不到「我 + 具体动作动词」（我拆了/我改了/我定了/我协调了）——面试官会判定你没做过"))
+
+    # S8 模糊限定堆（任意 50 字窗口内 ≥2）
+    hedges = ["可能", "大概", "某种程度上", "一定程度上", "或许", "应该算"]
+    window_hit = False
+    for i in range(0, max(len(body) - 50, 1)):
+        seg = body[i:i + 50]
+        if sum(seg.count(h) for h in hedges) >= 2:
+            window_hit = True
+            break
+    if window_hit:
+        tier2.append(("S8", "模糊限定堆", "50 字内出现 ≥2 个模糊限定（可能/大概/某种程度上）——要么给数字，要么删掉限定"))
+
+    # S9 黑话堆砌（≥3）
+    s9_hits = sorted({w for w in SLANG_WORDS_EXT if w in body})
+    if len(s9_hits) >= 3:
+        tier2.append(("S9", "黑话堆砌", "发现 %d 个黑话：%s——全部换成具体事实" % (len(s9_hits), "、".join(s9_hits))))
+
+    # S10 不确定性被抹平（全篇无限制/代价/失败）
+    if not any(w in body for w in CONSTRAINT_WORDS):
+        tier2.append(("S10", "不确定性被抹平", "全篇没有一处限制、代价或失败——原方法论要求「先讲限制，再讲成果」，没有限制的成果不可信"))
+
+    if not tier1 and not tier2:
+        lines.append("✅ 未触发任何 slop 签名")
+    else:
+        if tier1:
+            hard_fail += 1
+            lines.append("❌ Tier-1（硬性，必改）——命中 %d 条：" % len(tier1))
+            for code, name, fix in tier1:
+                lines.append("   - **%s %s**：%s" % (code, name, fix))
+        if tier2:
+            if len(tier2) >= 3:
+                hard_fail += 1
+                lines.append("❌ Tier-2 命中 %d 条（≥3 条判定为硬性不合格）：" % len(tier2))
+            else:
+                soft_warn += 1
+                lines.append("⚠️ Tier-2 命中 %d 条（1–2 条需人工改写确认）：" % len(tier2))
+            for code, name, fix in tier2:
+                lines.append("   - **%s %s**：%s" % (code, name, fix))
+
+    lines.append("")
+    lines.append("人工核对（脚本不自动判）：**S2 删掉分点后论点是否还成立**、**S7 是否 >60% 段落都是「总起+三句+收尾」同一形状**。")
+    lines.append("")
+    lines.append("对照样例见 `references/anti-slop.md`；说话方式校准见 `references/voice-calibration.md`。")
     lines.append("")
 
     # verdict
