@@ -65,7 +65,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [daily-report](skills/daily-report/SKILL.md) | 工作日报、效果、问题处理、卡点和明日计划 |
+| [weekly-report](skills/weekly-report/SKILL.md) | 工作周报、指标数据变化、卡点问题、改进方法和下周计划 |
 | [script-polish](skills/script-polish/SKILL.md) | 汇报稿、口播稿、视频脚本和表达润色 |
 
 ### 7. Skill 开发与维护
@@ -109,7 +109,7 @@ ai-pm-skills/
 │   ├── 求职与面试执行
 │   │   └── interview-prep / interview-retro / resume-jd-align / campus-apply-pipeline
 │   ├── 日常工作与内容表达
-│   │   └── daily-report / script-polish
+│   │   └── weekly-report / script-polish
 │   └── Skill 开发与维护
 │       └── skill-creator
 ├── workflows/
@@ -128,7 +128,7 @@ ai-pm-skills/
 ```text
 ai-product-portfolio-review
 campus-apply-pipeline
-daily-report
+weekly-report
 interview-retro
 prompt-writing
 resume-jd-align
