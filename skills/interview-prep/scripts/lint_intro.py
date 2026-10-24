@@ -8,14 +8,25 @@ Checks performed:
     1. Estimated speaking duration (Chinese speech ~= 4 chars/second)
     2. Red-line wording ("匹配" and its slogan variants)
     3. Empty bragging words ("逻辑强", "沟通好", ...) with no evidence attached
-    4. Structural completeness of the six required anchors
+    4. Structural completeness of the six required anchors (checked on the FULL
+       file; anchors live in the workspace zone)
     5. Quantitative evidence inside each hard story
     6. Filler words ("然后", "嗯", ...) left in the written script
     7. JD keyword coverage (only when --keywords is supplied)
-    8. AI-slop signatures (S1-S10 from references/anti-slop.md): meta-framing
-       opener, list-carrying argument, nominalization clusters, generic examples,
-       no first-person, prompt residue, hedge clusters, buzzword stuffing,
-       flattened uncertainty
+    8. AI-slop signatures (S1-S15 from references/anti-slop.md +
+       references/human-voice-spec.md): meta-framing opener, list-carrying
+       argument, nominalization clusters, generic examples, no first-person,
+       prompt residue, hedge clusters, buzzword stuffing, flattened
+       uncertainty, structural exposure (S11: bullets/numbering/labels leaked
+       into the speech text), uniform rhythm (S12), director-style
+       structural transitions (S13), workspace jargon leaked into speech
+       (S14), deliberate rhetoric bridges (S15)
+    9. Positive human-voice features (timeline markers, oral markers,
+       concession) from references/human-voice-spec.md
+
+All content checks (1-3, 5-9) run against the speech zone only: the text
+between <!-- speech:start --> / <!-- speech:end --> markers. Without markers,
+the whole file is linted (legacy behavior).
 
 The script is read-only with respect to everything except its own report,
 performs no network access, and never modifies the input file.
@@ -46,9 +57,10 @@ DISPLAY = {
     "【钩子】": "⑥ 钩子 【钩子】",
 }
 
-RED_LINE_WORDS = [
-    "匹配", "非常适合", "完全符合", "我很契合", "高度契合", "契合该岗位",
-    "岗位要求我都", "我就是你们要找的人",
+RED_LINE_PATTERNS = [
+    r"我(?:很|非常)?匹配", r"(?:很|非常|高度|完全)匹配", r"匹配(?:这个|该|贵司|贵公司|岗位|要求|方向)",
+    r"非常适合", r"完全符合", r"我很契合", r"高度契合", r"契合该岗位",
+    r"岗位要求我都", r"我就是你们要找的人", r"方向[^，。]{0,10}对得[上来]", r"完全对得上",
 ]
 
 EMPTY_BRAG_WORDS = [
@@ -84,9 +96,83 @@ NUMBER_PATTERNS = [
     r"\d+(?:\.\d+)?\s*(?:万|亿|千|人|天|周|个月|秒|次|条|篇)",
 ]
 
+# --- 拟人化检测（依据 references/human-voice-spec.md） ---
+SPEECH_START = "<!-- speech:start -->"
+SPEECH_END = "<!-- speech:end -->"
+
+# S11 结构外显：成稿区出现任何"提纲形状"即 Tier-1
+STRUCT_MARKER_PATTERNS = [
+    (r"^\s*[①②③④⑤⑥⑦⑧⑨]", "圈号序数 ①②③"),
+    (r"^\s*(?:\d+\s*[\.、]|[一二三四五六七八九]\s*[、\.])", "数字/汉字序号"),
+    (r"^\s*[-*•·]\s+", "列表符号 -/•"),
+    (r"^\s*#{1,6}\s", "markdown 标题"),
+    (r"^\s*\*\*[^*\n]+\*\*", "加粗小标题"),
+    (r"^\s*(?:背景|问题|过程|结果|定位|证据|动机|钩子|收尾|故事\s*[AB]|专业能力|项目经历|求职动机)\s*[:：]", "字段标签「背景：」式"),
+    (r"【[^】\n]{1,20}】", "正文中的【标签】"),
+    (r"[①②③④⑤⑥]", "正文中的圈号"),
+]
+
+TIMELINE_MARKERS = [
+    "当时", "的时候", "那时候", "那天", "后来", "接手时", "一开始", "那阵子", "那三个月",
+    "上线初期", "上线前", "前两周", "第一周", "实习第", "实习那", "大三", "大四",
+    "那两个月", "那个月", "那两周", "那年", "在读",
+]
+ORAL_MARKERS = ["其实", "说白了", "说实话", "这么说吧", "坦白讲", "挺", "蛮", "结果", "问题在于", "这块"]
+CONCESSION_MARKERS = [
+    "一开始", "更准确地说", "后来发现", "做错了", "选错", "我不太想说", "被推翻",
+]
+
+# S13 编导式转场（结构播报，human-voice-spec A13）——词表只是兜底，人工判定为准
+DIRECTOR_TRANSITION_PATTERNS = [
+    r"就说这段", r"聊聊这个", r"话锋一转", r"从头讲", r"接下来这段", r"下面这段",
+    r"说回正题", r"轮到(?:交互|技术|项目|结果|动机|治理|产品)",
+]
+
+# S14 术语泄漏（工作台词汇进了成稿，human-voice-spec A14）
+JARGON_LEAK_PATTERNS = [
+    r"最硬的", r"深水区", r"弹药", r"北极星", r"埋钩子", r"留钩子", r"钩子是", r"贴标签",
+]
+
+# S15 刻意修辞桥（悬念句/反转句/设计回指，human-voice-spec A15）
+RHETORIC_BRIDGE_PATTERNS = [
+    r"就是这么来的", r"我没先(?:碰|动|做)", r"不是[^，。]{1,8}调出来的", r"就是这么挣来的",
+]
+
+# S16 模糊动词壳（human-voice-spec H12：既非手段也非成果的动量词短语）
+MUSHY_VERB_PATTERNS = [
+    r"重做了一?轮", r"做了一?轮迭代", r"下手做", r"搞了一?波", r"迭代了一?轮",
+]
+
+# S17 具体日历时间（自我介绍不写日历时间——简历上有，口语用相对/场景时间）
+CALENDAR_PATTERNS = [r"20\d{2}\s*年", r"\d{1,2}\s*月份?到"]
+
 
 def cjk_count(text: str) -> int:
     return len(re.findall(r"[\u4e00-\u9fff]", text))
+
+
+def extract_speech_zones(text: str):
+    """Return list of 开讲版 zones between speech markers (empty list if none)."""
+    zones = []
+    rest = text
+    while True:
+        i = rest.find(SPEECH_START)
+        if i == -1:
+            break
+        rest = rest[i + len(SPEECH_START):]
+        j = rest.find(SPEECH_END)
+        if j == -1:
+            zones.append(rest)
+            break
+        zones.append(rest[:j])
+        rest = rest[j + len(SPEECH_END):]
+    return zones
+
+
+def extract_speech(text: str) -> str:
+    """All speech zones joined; falls back to whole text (legacy behavior)."""
+    zones = extract_speech_zones(text)
+    return "\n".join(zones).strip() if zones else text
 
 
 def estimated_seconds(text: str) -> float:
@@ -116,6 +202,7 @@ def main() -> int:
     parser.add_argument("file", help="Path to the self-introduction markdown/text file")
     parser.add_argument("--target", type=int, default=90, help="Target duration in seconds (default: 90)")
     parser.add_argument("--keywords", default="", help="Comma separated JD keywords to check coverage")
+    parser.add_argument("--zone", type=int, default=0, help="Lint only the Nth speech zone (1-based); 0 = all zones joined")
     parser.add_argument("--strict", action="store_true", help="Exit 1 when any hard check fails")
     args = parser.parse_args()
 
@@ -124,6 +211,20 @@ def main() -> int:
         print("ERROR: file not found: %s" % path, file=sys.stderr)
         return 2
     text = path.read_text(encoding="utf-8")
+    zones = extract_speech_zones(text)
+    if zones and args.zone > 0:
+        if args.zone > len(zones):
+            print("ERROR: only %d speech zone(s) found, --zone %d out of range" % (len(zones), args.zone), file=sys.stderr)
+            return 2
+        speech = zones[args.zone - 1].strip()
+        zone_desc = "开讲版第 %d/%d 段" % (args.zone, len(zones))
+    elif zones:
+        speech = "\n".join(zones).strip()
+        zone_desc = "开讲版全部 %d 段（合并计时，可用 --zone 分段）" % len(zones)
+    else:
+        speech = text
+        zone_desc = "全文（未找到 speech 标记，按旧版行为）"
+    linting_speech_zone = speech != text
 
     hard_fail = 0
     soft_warn = 0
@@ -133,14 +234,15 @@ def main() -> int:
     lines.append("")
     lines.append("- 文件: `%s`" % path)
     lines.append("- 目标时长: %d 秒" % args.target)
+    lines.append("- 检测区域: %s" % zone_desc)
     lines.append("")
 
     # 1. duration
-    seconds = estimated_seconds(text)
+    seconds = estimated_seconds(speech)
     delta = abs(seconds - args.target)
     lines.append("## 1. 时长估算")
     lines.append("")
-    lines.append("中文字符数: %d，按 4 字/秒估算 **%.0f 秒**（目标 %d 秒）" % (cjk_count(text), seconds, args.target))
+    lines.append("中文字符数: %d，按 4 字/秒估算 **%.0f 秒**（目标 %d 秒）" % (cjk_count(speech), seconds, args.target))
     if delta <= 15:
         lines.append("✅ 时长在合理区间内（±15 秒）")
     elif delta <= 30:
@@ -154,14 +256,14 @@ def main() -> int:
     # 2. red line
     lines.append("## 2. 红线词检查（喊「匹配」＝邀请面试官反驳你）")
     lines.append("")
-    red_hits = [(w, m.start()) for w in RED_LINE_WORDS for m in re.finditer(re.escape(w), text)]
+    red_hits = [(p, m.start()) for p in RED_LINE_PATTERNS for m in re.finditer(p, speech)]
     if not red_hits:
         lines.append("✅ 未发现红线词")
     else:
         hard_fail += 1
         lines.append("❌ 发现 %d 处红线词，全部删除后重跑：" % len(red_hits))
         for w, pos in red_hits:
-            snippet = text[max(0, pos - 20):pos + 20].replace("\n", " ")
+            snippet = speech[max(0, pos - 20):pos + 20].replace("\n", " ")
             lines.append("   - `%s` …%s…" % (w, snippet))
         lines.append("   - 改法：删掉「我很匹配/非常适合」，改成讲一个让面试官自己得出匹配的故事")
     lines.append("")
@@ -169,7 +271,7 @@ def main() -> int:
     # 3. empty bragging
     lines.append("## 3. 空泛优势词检查")
     lines.append("")
-    brag_hits = sorted({w for w in EMPTY_BRAG_WORDS if w in text})
+    brag_hits = sorted({w for w in EMPTY_BRAG_WORDS if w in speech})
     if not brag_hits:
         lines.append("✅ 未发现无佐证的优势形容词")
     else:
@@ -219,8 +321,8 @@ def main() -> int:
     # 6. filler & slang
     lines.append("## 6. 口语赘余与黑话")
     lines.append("")
-    filler_hits = sorted({w for w in FILLER_WORDS if w in text})
-    slang_hits = sorted({w for w in SLANG_WORDS if w in text})
+    filler_hits = sorted({w for w in FILLER_WORDS if w in speech})
+    slang_hits = sorted({w for w in SLANG_WORDS if w in speech})
     if not filler_hits:
         lines.append("✅ 未发现口头禅")
     else:
@@ -243,7 +345,7 @@ def main() -> int:
     else:
         hit, miss = [], []
         for k in kws:
-            (hit if k in text else miss).append(k)
+            (hit if k in speech else miss).append(k)
         if hit:
             lines.append("✅ 已命中：%s" % "、".join(hit))
         if miss:
@@ -256,7 +358,7 @@ def main() -> int:
     lines.append("## 8. AI 味检测（Slop 签名，依据 references/anti-slop.md）")
     lines.append("")
 
-    body = text
+    body = speech
     n_chars = max(cjk_count(body), 1)
     tier1, tier2 = [], []
 
@@ -308,6 +410,44 @@ def main() -> int:
     if not any(w in body for w in CONSTRAINT_WORDS):
         tier2.append(("S10", "不确定性被抹平", "全篇没有一处限制、代价或失败——原方法论要求「先讲限制，再讲成果」，没有限制的成果不可信"))
 
+    # S11 结构外显（Tier-1）：开讲版里出现序号/列表/标签/标题/字段冒号
+    s11_labels = []
+    for pat, label in STRUCT_MARKER_PATTERNS:
+        if re.search(pat, body, re.M):
+            s11_labels.append(label)
+    if s11_labels:
+        tier1.append(("S11", "结构外显", "成稿里出现 %s——公式骨架被外显成了输出格式（分点答题的直接根因）。把分点连成连续的话，转场用内容词（后来/另一件事/说回到），标签只允许留在工作台区" % "、".join(sorted(set(s11_labels)))))
+
+    # S12 节奏（逗号链过长——出声读会憋气；短句不强制要求，刻意造 mic-drop 反而是 A16）
+    sents = [s.strip() for s in re.split(r"[。！？!?；]", body) if s.strip() and cjk_count(s.strip()) >= 3]
+    long_comma = [s for s in sents if s.count("，") >= 4 or s.count(",") >= 4]
+    if long_comma:
+        tier2.append(("S12", "逗号链过长", "有 %d 句逗号 ≥4——出声读会憋气，拆成两句" % len(long_comma)))
+
+    # S13 编导式转场（结构播报，词表兜底）
+    s13_hits = [p for p in DIRECTOR_TRANSITION_PATTERNS if re.search(p, body)]
+    if s13_hits:
+        tier2.append(("S13", "编导式转场", "发现 %s——转场在播报结构而不是推进内容（真人转场带时间/因果/话题信息，或不转直接说下一件事）；删掉这句看前后是否仍直接相连，能相连就删" % "、".join(s13_hits)))
+
+    # S14 术语泄漏（工作台词汇进了成稿）
+    s14_hits = [p for p in JARGON_LEAK_PATTERNS if re.search(p, body)]
+    if s14_hits:
+        tier2.append(("S14", "术语泄漏", "发现 %s——这些是准备过程的工作台行话，面试官没读过你的方法论；换成面试官视角的自然说法（报经历用「最核心的一段是在 X 做 Y，主要负责 Z」）" % "、".join(s14_hits)))
+
+    # S15 刻意修辞桥（悬念/反转/设计回指）
+    s15_hits = [p for p in RHETORIC_BRIDGE_PATTERNS if re.search(p, body)]
+    if s15_hits:
+        tier2.append(("S15", "刻意修辞桥", "发现 %s——为效果而非为信息服务的句子；删掉后信息无损的悬念句/回指句一律删，报经历=手段→成果平铺直叙" % "、".join(s15_hits)))
+
+    # S16 模糊动词壳（既非手段也非成果）
+    s16_hits = [p for p in MUSHY_VERB_PATTERNS if re.search(p, body)]
+    if s16_hits:
+        tier2.append(("S16", "模糊动词壳", "发现 %s——既不是手段也不是成果的动量词短语；成果句用标准形态「通过【名词级手段】，把【指标】从 A 提升到 B」" % "、".join(s16_hits)))
+
+    # S17 具体日历时间（自我介绍不写日历时间）
+    if re.search(r"20\d{2}\s*年", body):
+        tier2.append(("S17", "具体日历时间", "自我介绍里出现 20XX 年——简历上有日历时间，口语里说它不携带增量；换成相对/场景时间（接手的时候/一开始/那阵子/前两周）"))
+
     if not tier1 and not tier2:
         lines.append("✅ 未触发任何 slop 签名")
     else:
@@ -327,9 +467,33 @@ def main() -> int:
                 lines.append("   - **%s %s**：%s" % (code, name, fix))
 
     lines.append("")
-    lines.append("人工核对（脚本不自动判）：**S2 删掉分点后论点是否还成立**、**S7 是否 >60% 段落都是「总起+三句+收尾」同一形状**。")
+    lines.append("## 9. 拟人特征正向检查（human-voice-spec H3/H5/H8）")
     lines.append("")
-    lines.append("对照样例见 `references/anti-slop.md`；说话方式校准见 `references/voice-calibration.md`。")
+
+    if any(w in body for w in TIMELINE_MARKERS):
+        lines.append("✅ 有叙事时间标记（当时/后来/上线前…）")
+    else:
+        soft_warn += 1
+        lines.append("⚠️ 没有叙事时间标记——把「实习期间我负责…」改成「实习那两个月，当时…」（总结态→叙事态）")
+
+    oral_n = sum(body.count(w) for w in ORAL_MARKERS)
+    if 3 <= oral_n <= 8:
+        lines.append("✅ 口语标记 %d 个（目标 3–6）" % oral_n)
+    else:
+        soft_warn += 1
+        lines.append("⚠️ 口语标记 %d 个（目标 3–6：其实/说白了/挺/蛮/这么说吧）——0 个是通稿感，>8 是表演感" % oral_n)
+
+    if any(w in body for w in CONCESSION_MARKERS):
+        lines.append("✅ 有让步/自我修正（一开始…后来发现…）")
+    else:
+        soft_warn += 1
+        lines.append("⚠️ 没有让步或修正——加恰好一处（说实话这块我一开始做错了 / 更准确地说 / 一开始我想…后来发现不行）")
+
+    lines.append("")
+
+    lines.append("人工核对（脚本不自动判）：**S2 删掉分点后论点是否还成立**、**S7 是否 >60% 段落都是「总起+三句+收尾」同一形状**、**接缝检查（随机删一句前后仍自然衔接）**。")
+    lines.append("")
+    lines.append("对照样例见 `references/anti-slop.md`；AI 味与拟人化规范见 `references/human-voice-spec.md`；说话方式校准见 `references/voice-calibration.md`。")
     lines.append("")
 
     # verdict
