@@ -6,7 +6,7 @@
 
 ## 这是什么
 
-AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 19 个独立 Skill 和 1 个项目 Workflow。
+AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 18 个独立 Skill 和 1 个项目 Workflow。
 
 每个 Skill 都包含：
 
@@ -56,8 +56,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陪练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、通用题 16 道、项目类问题答题路径、压力面话术、七类题库、模拟面试 |
-| [interview-retro](skills/interview-retro/SKILL.md) | 面试复盘、问题归因、漏斗诊断和改进清单 |
+| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陪练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、通用题 16 道、项目类问题答题路径、压力面话术、七类题库、模拟面试、面后复盘（完整还原 + 漏斗诊断 + 溯源根治） |
 | [resume-jd-align](skills/resume-jd-align/SKILL.md) | 简历与 JD 对齐、关键词匹配和项目描述优化 |
 | [campus-apply-pipeline](skills/campus-apply-pipeline/SKILL.md) | 校招/实习投递全流程：读履历、四维评分排序、官方网申、回填主表置顶、双写看板 |
 
@@ -113,7 +112,7 @@ ai-pm-skills/
 │   │   ├── ai-product-portfolio-review
 │   │   └── skill-quality-checker
 │   ├── 求职与面试执行
-│   │   └── interview-prep / interview-retro / resume-jd-align / campus-apply-pipeline
+│   │   └── interview-prep / resume-jd-align / campus-apply-pipeline
 │   ├── 日常工作与内容表达
 │   │   └── weekly-report / script-polish
 │   └── Skill 开发与维护
@@ -129,15 +128,13 @@ ai-pm-skills/
 
 ## 源码与打包状态
 
-当前 `dist/` 中有 11 个已打包文件，均与当前保留的源码或 Workflow 对应。
+当前 `dist/` 中有 12 个已打包文件，均与当前保留的源码或 Workflow 对应。
 
 以下 Skill 当前有源码，但还没有对应的 `.skill` 包：
 
 ```text
 ai-product-portfolio-review
 campus-apply-pipeline
-weekly-report
-interview-retro
 prompt-writing
 resume-jd-align
 script-polish
