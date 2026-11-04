@@ -18,7 +18,8 @@ description: "AI 产品经理面试复盘方法论。用漏斗思维诊断求职
 interview-retro/
 ├── SKILL.md                          # 主文档
 └── references/
-    ├── retro-template.md             # 面试复盘模板
+    ├── retro-template.md             # 面试复盘模板（完整版：还原/漏斗/短板/改进）
+    ├── retro-table.md                # 面试复盘表模板（基本信息 + 问题收集 + 现场回答，现场回答填原始话术）
     └── prompts.md                    # 复盘引导提示词
 ```
 
@@ -123,5 +124,6 @@ interview-retro/
 
 | 文件 | 用途 |
 |------|------|
-| `references/retro-template.md` | 面试复盘记录模板 |
+| `references/retro-template.md` | 面试复盘记录模板（完整版） |
+| `references/retro-table.md` | 面试复盘表模板：基本信息 + 问题收集 + 现场回答（现场回答填逐字稿原文，不压缩） |
 | `references/prompts.md` | 复盘引导、短板诊断提示词 |
