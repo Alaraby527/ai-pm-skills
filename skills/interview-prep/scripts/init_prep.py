@@ -23,6 +23,8 @@ TEMPLATES = [
     ("ask-list.md", "06-提问清单.md"),
     ("review.md", "07-复盘.md"),
     ("checklist.md", "08-时间表自检.md"),
+    ("common-answers.md", "09-通用题.md"),
+    ("stress-drill.md", "10-压力面.md"),
 ]
 
 
@@ -81,6 +83,7 @@ def main() -> int:
     print("  3. 写 03-自我介绍稿.md，然后跑体检:")
     print("     python3 %s/lint_intro.py \"%s/03-自我介绍稿.md\" --target 90"
           % (Path(__file__).resolve().parent, target))
+    print("  4. 填 09-通用题.md（16 道，每题 60-90 秒）与 10-压力面.md（五类话术 + 演练打分）")
     return 0
 
 

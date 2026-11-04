@@ -6,7 +6,7 @@
 
 ## 这是什么
 
-AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 18 个独立 Skill 和 1 个项目 Workflow。
+AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 19 个独立 Skill 和 1 个项目 Workflow。
 
 每个 Skill 都包含：
 
@@ -56,7 +56,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陪练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、七类题库、模拟面试 |
+| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陪练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、通用题 16 道、项目类问题答题路径、压力面话术、七类题库、模拟面试 |
 | [interview-retro](skills/interview-retro/SKILL.md) | 面试复盘、问题归因、漏斗诊断和改进清单 |
 | [resume-jd-align](skills/resume-jd-align/SKILL.md) | 简历与 JD 对齐、关键词匹配和项目描述优化 |
 | [campus-apply-pipeline](skills/campus-apply-pipeline/SKILL.md) | 校招/实习投递全流程：读履历、四维评分排序、官方网申、回填主表置顶、双写看板 |
@@ -73,6 +73,12 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 | Skill | 主要用途 |
 |---|---|
 | [skill-creator](skills/skill-creator/SKILL.md) | 创建 Skill、设计触发条件、输入输出和异常兜底 |
+
+### 8. 工程开发与 AI 驱动开发
+
+| Skill | 主要用途 |
+|---|---|
+| [vibe-coding-project](skills/vibe-coding-project/SKILL.md) | Vibe Coding 六阶段项目推进法：需求对齐→方案输出→MVP开发→项目测试→Bug改进→最终交付，含 23 个可直接复制的 Prompt 模板和三层验收清单 |
 
 ## 项目 Workflow
 
@@ -112,6 +118,8 @@ ai-pm-skills/
 │   │   └── weekly-report / script-polish
 │   └── Skill 开发与维护
 │       └── skill-creator
+│   └── 工程开发与 AI 驱动开发
+│       └── vibe-coding-project
 ├── workflows/
 │   └── ai-pm-project-workflow/
 └── dist/
@@ -134,6 +142,7 @@ prompt-writing
 resume-jd-align
 script-polish
 skill-quality-checker
+vibe-coding-project
 ```
 
 打包文件只是安装产物，源码目录中的 `SKILL.md` 才是维护入口。新增或修改 Skill 后，应同步更新 README 和对应打包文件。
