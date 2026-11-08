@@ -1,6 +1,6 @@
 ---
 name: vibe-coding-project
-description: "Vibe Coding 真实项目推进方法论。用 Prompt 驱动 AI 完成一个真实软件项目的六阶段工作流：需求对齐→方案输出→MVP开发→项目测试→Bug改进→最终交付。覆盖需求锁定、自动化边界划分、PRD 事实源建立、七层方案检查、AGENTS.md 规则固化、MVP 闭环拆分、TDD 三层验收、只读冒烟、系统化调试、最小修复与原路径回归。当用户说「Vibe Coding」「用 AI 做项目」「AI 驱动开发」「怎么用 Prompt 带 AI 做项目」「AI 开发方法论」「vibe coding 流程」「AI 写项目怎么推进」时触发。"
+description: "Vibe Coding 真实项目推进方法论。用 Prompt 驱动 AI 完成一个真实软件项目的六阶段工作流：需求对齐→方案输出→MVP开发→项目测试→Bug改进→最终交付。覆盖需求锁定、自动化边界划分、PRD 事实源建立、七层方案检查、AGENTS.md 规则固化、MVP 闭环拆分、TDD 三层验收、只读冒烟、系统化调试、最小修复与原路径回归；并附带九条可自查硬规则（规格先行、五节 spec、七层 plan、三层验收、冒烟只读、前后端分离、Git 纪律、破坏性操作禁令），每条都给出可直接运行的检查命令，便于在 Claude Code / Cursor / Codex 等任意 agent 里强制执行。当用户说「Vibe Coding」「用 AI 做项目」「AI 驱动开发」「怎么用 Prompt 带 AI 做项目」「AI 开发方法论」「vibe coding 流程」「AI 写项目怎么推进」时触发。"
 ---
 
 # Vibe Coding 项目推进方法论
@@ -14,15 +14,17 @@ description: "Vibe Coding 真实项目推进方法论。用 Prompt 驱动 AI 完
 **你能得到什么**：
 - 一份可直接复制的六阶段 Prompt 模板合集（references/prompts.md）
 - 三层验收清单（状态层 / 内容层 / 页面链路层）
+- **九条硬规则 + 可执行自查命令**（references/hard-rules.md），不依赖任何插件或平台，在 Claude Code / Cursor / Codex / DSH 里都能用
 - 完整实战案例（AI 评测自迭代工作台，23 个真实对话节点）
 
 **文件结构**：
 ```
 vibe-coding-project/
-├── SKILL.md                              # 主文档：触发条件 + 六阶段工作流 + 质量红线
+├── SKILL.md                              # 主文档：触发条件 + 六阶段工作流 + 质量红线 + 硬规则摘要
 └── references/
     ├── prompts.md                         # 六阶段完整 Prompt 模板合集（23 个节点）
     ├── acceptance-checklist.md            # 三层验收清单与质量门禁
+    ├── hard-rules.md                      # 九条硬规则 + 可执行自查命令 + 开工/收尾检查清单
     └── case-example.md                    # 完整案例：AI 评测自迭代工作台
 ```
 
@@ -161,6 +163,96 @@ vibe-coding-project/
 - 不要把"测试通过"写成"产品一定没有问题"
 - 不要把 draft 写成已发布
 - 不要省略仍未完成或仍需人工判断的部分
+
+## 硬规则（可直接自查）
+
+方法论靠自觉，但长会话里「自觉」会失效。下面九条是能机械判定的，每条都给出可执行命令；
+完整版（含开工/收尾检查清单、常见借口对照）见 `references/hard-rules.md`。
+
+**先建这套目录约定**（AI 没有跨会话记忆，靠文件传递状态）：
+
+```
+<项目根>/
+├── AGENTS.md                  # 技术栈锁定 + 不可变约定
+├── specs/<slug>/
+│   ├── spec.md                # 五节：问题/需求/验收标准/不做清单/自动化边界
+│   ├── plan.md                # 七层方案
+│   ├── tasks.md               # 复选框任务
+│   ├── .active                # 激活标记（恰好一个）
+│   ├── .phase                 # 当前阶段
+│   └── .accepted-<阶段>       # 人工验收标记
+├── docs/smoke-report.md       # 冒烟报告
+├── docs/regression-report.md  # 回归证据
+├── apps/api/  apps/web/       # 前后端
+└── packages/contracts/        # 唯一允许两端共享的层
+```
+
+| # | 规则 | 自查命令 | 不通过怎么办 |
+|---|---|---|---|
+| 1 | **规格先行**：写源码前必须有恰好一个活跃规格 | `ls specs/*/.active 2>/dev/null` 应恰好输出 1 行 | 先建规格，不要「先写点试试」 |
+| 2 | **spec.md 五节齐全** | `grep -c "^## " specs/<slug>/spec.md` 应为 5（五节名称见下方脚本） | 补齐缺的节，第 4、5 节最易漏 |
+| 3 | **plan.md 七层齐全** | 见下方「七层检查脚本」，应为 7 | 缺哪层补哪层，不要猜 |
+| 4 | **AGENTS.md 含不可变约定** | `grep -q "不可变约定" AGENTS.md && echo ok` | 补写，禁止「建议/可以考虑」软表达 |
+| 5 | **不留占位符** | 见下方「占位符检查脚本」，应无输出 | 换成具体问题去问用户 |
+| 6 | **三层验收齐备** | `ls specs/<slug>/.accepted-mvp-* 2>/dev/null` 应恰好列出 3 个 | 缺哪层补证据；**不要自己创建标记** |
+| 7 | **冒烟阶段只读** | `git status --porcelain apps/ packages/` 应为空 | 写进 smoke-report.md，等确认后再修 |
+| 8 | **前后端分离** | `grep -rn "apps/api" apps/web/src` 应为空 | 共享类型搬到 packages/contracts |
+| 9 | **Git 纪律** | `git branch --show-current` 不能是 main/master/develop | 建 feat/<slug> 分支 |
+
+### 三个可直接复制的检查脚本
+
+表格里为了让竖线正常显示做过转义，**实际执行请用下面这些块**（无转义，可整段粘贴）：
+
+```bash
+# 规则 2：spec.md 五节检查
+f=specs/<slug>/spec.md
+for h in Problem Requirements "Acceptance Criteria" 不做 自动化边界; do
+  grep -qE "^## .*${h}" "$f" && echo "ok   $h" || echo "MISS $h"
+done
+```
+
+```bash
+# 规则 3：plan.md 七层检查（输出 7 表示齐全）
+grep -oE "数据层|评测层|核心业务层|执行层|异常层|展示层|改进产物层|风险层" \
+  specs/<slug>/plan.md | sort -u | wc -l
+```
+
+```bash
+# 规则 5：占位符检查（无输出表示通过）
+grep -nE "TODO|TBD|FIXME|待确认|待补充" specs/<slug>/*.md AGENTS.md
+```
+
+### 破坏性操作禁令
+
+以下命令不要执行，遇到就停下来让用户自己跑：
+`rm -rf` 指向 `/`、`~`、`..`、工作目录外 · `git reset --hard` · `git clean -fdx` ·
+`git checkout .` / `git restore .` · `chmod -R 777` · `dd if=` · `mkfs*` · `shutdown` / `reboot`
+
+### 开工前 / 收尾前各跑一次
+
+```bash
+# 开工前：我在哪一步？
+echo "活跃规格:"; ls specs/*/.active 2>/dev/null
+echo "当前阶段:"; cat specs/*/.phase 2>/dev/null
+echo "当前分支:"; git branch --show-current
+echo "未完成任务:"; grep -c "^- \[ \]" specs/*/tasks.md 2>/dev/null
+
+# 提交前：能不能提交？
+grep -c "^- \[ \]" specs/<slug>/tasks.md     # 必须是 0
+ls specs/<slug>/.accepted-mvp-* 2>/dev/null    # MVP 阶段必须 3 个
+git status --porcelain                          # 改动范围符合预期吗
+```
+
+### 什么时候可以放宽
+
+| 场景 | 可放宽 | 不可放宽 |
+|---|---|---|
+| 一次性脚本、探索代码 | 规格、任务拆分、三层验收 | 破坏性操作禁令、文件边界 |
+| 纯文档项目 | 七层方案、三层验收 | 需求对齐、不做清单 |
+| 无前端项目 | 页面链路层、前后端分离 | 状态层、内容层 |
+| 紧急线上修复 | 完整规格 | 根因诊断、原路径回归、分支纪律 |
+
+**原则**：可以少写文档，但不能跳过「想清楚」和「验证过」。
 
 ## 质量门禁总览
 
