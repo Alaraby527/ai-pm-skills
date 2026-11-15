@@ -77,7 +77,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [vibe-coding-project](skills/vibe-coding-project/SKILL.md) | Vibe Coding 六阶段项目推进法：需求对齐→方案输出→MVP开发→项目测试→Bug改进→最终交付，含 23 个可直接复制的 Prompt 模板、三层验收清单，以及九条可自查硬规则（规格先行/五节 spec/七层 plan/三层验收/冒烟只读/前后端分离/Git 纪律/破坏性操作禁令），每条都配可执行检查命令，在 Claude Code / Cursor / Codex / DSH 等任意 agent 里都能落地 |
+| [vibe-coding-project](skills/vibe-coding-project/SKILL.md) | Vibe Coding 七阶段项目推进法：需求对齐→开源调研→方案输出→MVP开发→项目测试→Bug改进→最终交付，含 26 个可直接复制的 Prompt 模板、三层验收清单、开源调研环节，以及十条可自查硬规则（规格先行/先查轮子/五节 spec/七层 plan/三层验收/冒烟只读/前后端分离/Git 纪律/破坏性操作禁令），每条都配可执行检查命令，在 Claude Code / Cursor / Codex / DSH 等任意 agent 里都能落地 |
 
 ## 项目 Workflow
 
