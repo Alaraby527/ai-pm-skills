@@ -42,7 +42,7 @@ python3 scripts/render.py /path/to/film -q delivery
 
 `render.py` 自动识别工程类型、自己补 PATH、渲染后会用 ffprobe 校验时长/分辨率/帧率/体积，并打印关键帧路径供肉眼验收。渲染成功不等于片子对，**必须看抽出来的帧**。
 
-## 工作流（细节见 reference/workflow.md）
+## 工作流（细节见 references/workflow.md）
 
 1. **需求归一**：题材、受众、时长、画幅、语言、音轨、用途，一次问齐。
 2. **知识稿**：写成事实卡片（主张 / 怎么可视化 / 出处 / 易误解点），没有出处的不进片子。
