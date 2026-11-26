@@ -6,7 +6,7 @@
 
 ## 这是什么
 
-AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 18 个独立 Skill 和 1 个项目 Workflow。
+AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 产品经理工具箱。当前保留 19 个独立 Skill 和 1 个项目 Workflow。
 
 每个 Skill 都包含：
 
@@ -56,7 +56,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 
 | Skill | 主要用途 |
 |---|---|
-| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陪练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、通用题 16 道、项目类问题答题路径、压力面话术、七类题库、模拟面试、面后复盘（完整还原 + 漏斗诊断 + 溯源根治） |
+| [interview-prep](skills/interview-prep/SKILL.md) | 面试全流程陭练：JD 拆解、自我介绍逐字稿（含脚本体检）、STAR 故事卡、通用题 16 道、项目类问题答题路径、压力面话术、七类题库、模拟面试、面后复盘（完整还原 + 漏斗诊断 + 溯源根治） |
 | [resume-jd-align](skills/resume-jd-align/SKILL.md) | 简历与 JD 对齐、关键词匹配和项目描述优化 |
 | [campus-apply-pipeline](skills/campus-apply-pipeline/SKILL.md) | 校招/实习投递全流程：读履历、四维评分排序、官方网申、回填主表置顶、双写看板 |
 
@@ -66,6 +66,7 @@ AI PM SkillKit 不是零散的 Prompt，而是一套按工作职责组织的 AI 
 |---|---|
 | [weekly-report](skills/weekly-report/SKILL.md) | 工作周报、指标数据变化、卡点问题、改进方法和下周计划 |
 | [script-polish](skills/script-polish/SKILL.md) | 汇报稿、口播稿、视频脚本和表达润色 |
+| [code-video](skills/code-video/SKILL.md) | 用代码（HTML / React）把分镜表渲染成视频并导出 MP4：HyperFrames / Remotion 双栈自动选型、环境自检与渲染校验脚本、两套已实测模板 |
 
 ### 7. Skill 开发与维护
 
@@ -114,7 +115,7 @@ ai-pm-skills/
 │   ├── 求职与面试执行
 │   │   └── interview-prep / resume-jd-align / campus-apply-pipeline
 │   ├── 日常工作与内容表达
-│   │   └── weekly-report / script-polish
+│   │   └── weekly-report / script-polish / code-video
 │   └── Skill 开发与维护
 │       └── skill-creator
 │   └── 工程开发与 AI 驱动开发
@@ -135,6 +136,7 @@ ai-pm-skills/
 ```text
 ai-product-portfolio-review
 campus-apply-pipeline
+code-video
 prompt-writing
 resume-jd-align
 script-polish
@@ -195,7 +197,7 @@ ai-pm-project-workflow
 
 方法论、模板和案例应结合具体业务、数据权限和风险边界使用。许可证信息以仓库中的实际声明为准。
 
-<!-- build: alr527_hydra_2026 | updated 2026.10 -->
+<!-- build: alr527_hydra_2026 | updated 2026.11 -->
 
 ---
 
@@ -219,4 +221,3 @@ ai-pm-project-workflow
 如需将本项目用于作品集展示、合作开发或商业用途，请先联系作者获取书面授权。
 
 **违反本声明者，作者保留追究法律责任的全部权利，包括但不限于 GitHub DMCA 下架、向招聘方提交侵权证据、民事诉讼。**
-
