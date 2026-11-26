@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-CN" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        /* 设计令牌：改这里就能换整片风格，不要散落在各处 */
+        --ground: #08090a;
+        --ink: #ebe5d8;
+        --ink-dim: #8c9099;
+        --gold: #deb78d;
+        --steel: #91aebb;
+        --line: #243038;
+        --font-serif: "Noto Serif SC", serif;
+        --font-sans: "Noto Sans SC", sans-serif;
+        --font-mono: "JetBrains Mono", monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        background: var(--ground);
+        font-family: var(--font-sans);
+      }
+
+      /* ===== 常驻层：背景柔光 / 细网格 / 暗角，只出现一次，不参与时间轴 ===== */
+      #glow {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(900px 620px at 68% 34%, rgba(222, 183, 141, 0.13), transparent 62%),
+          radial-gradient(760px 520px at 22% 76%, rgba(145, 174, 187, 0.1), transparent 64%);
+      }
+
+      #grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(36, 48, 56, 0.34) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(36, 48, 56, 0.34) 1px, transparent 1px);
+        background-size: 120px 120px;
+        -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 32%, transparent 78%);
+        mask-image: radial-gradient(circle at 50% 45%, #000 32%, transparent 78%);
+      }
+
+      #vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at center, transparent 46%, rgba(0, 0, 0, 0.74) 100%);
+      }
+
+      #progress-track {
+        position: absolute;
+        left: 96px;
+        right: 96px;
+        bottom: 64px;
+        height: 1px;
+        background: rgba(235, 229, 216, 0.14);
+      }
+
+      #progress {
+        position: absolute;
+        left: 96px;
+        bottom: 63px;
+        width: 1728px;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold), var(--steel));
+        transform-origin: left center;
+        opacity: 0.7;
+      }
+
+      #stamp {
+        position: absolute;
+        right: 96px;
+        bottom: 96px;
+        font-family: var(--font-mono);
+        font-size: 20px;
+        color: rgba(235, 229, 216, 0.38);
+        letter-spacing: 0.12em;
+      }
+
+      /* ===== 场景 1：封面 ===== */
+      #kicker {
+        position: absolute;
+        left: 96px;
+        top: 300px;
+        font-family: var(--font-mono);
+        font-size: 22px;
+        letter-spacing: 0.34em;
+        color: var(--gold);
+      }
+
+      #title {
+        position: absolute;
+        left: 96px;
+        top: 352px;
+        font-family: var(--font-serif);
+        font-size: 112px;
+        font-weight: 600;
+        line-height: 1.18;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      #subtitle {
+        position: absolute;
+        left: 96px;
+        top: 690px;
+        font-size: 34px;
+        line-height: 1.74;
+        color: var(--ink-dim);
+      }
+
+      #hairline {
+        position: absolute;
+        left: 96px;
+        top: 806px;
+        width: 1728px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--gold), rgba(222, 183, 141, 0));
+        transform-origin: left center;
+      }
+
+      /* ===== 场景 2：关系图 ===== */
+      #s2-head {
+        position: absolute;
+        left: 96px;
+        top: 132px;
+        font-family: var(--font-mono);
+        font-size: 24px;
+        letter-spacing: 0.22em;
+        color: var(--steel);
+      }
+
+      #s2-title {
+        position: absolute;
+        left: 96px;
+        top: 178px;
+        font-family: var(--font-serif);
+        font-size: 60px;
+        font-weight: 500;
+      }
+
+      #diagram {
+        position: absolute;
+        left: 240px;
+        top: 320px;
+        width: 1440px;
+        height: 560px;
+      }
+
+      .node-ring {
+        fill: none;
+        stroke: rgba(235, 229, 216, 0.45);
+        stroke-width: 1.5;
+      }
+
+      .node-core {
+        fill: rgba(222, 183, 141, 0.08);
+      }
+
+      .link {
+        stroke: rgba(145, 174, 187, 0.5);
+        stroke-width: 1.5;
+        fill: none;
+      }
+
+      .node-label {
+        font-family: var(--font-serif);
+        font-size: 52px;
+        font-weight: 500;
+        fill: var(--ink);
+        text-anchor: middle;
+      }
+
+      .node-sub {
+        font-family: var(--font-sans);
+        font-size: 22px;
+        fill: var(--ink-dim);
+        text-anchor: middle;
+      }
+
+      #s2-foot {
+        position: absolute;
+        left: 96px;
+        bottom: 148px;
+        font-size: 30px;
+        color: var(--ink-dim);
+        letter-spacing: 0.04em;
+      }
+
+      /* ===== 场景 3：结论 ===== */
+      #s3-quote {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 400px;
+        text-align: center;
+        font-family: var(--font-serif);
+        font-size: 78px;
+        font-weight: 500;
+        line-height: 1.38;
+        letter-spacing: 0.04em;
+      }
+
+      #s3-sub {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 706px;
+        text-align: center;
+        font-size: 28px;
+        color: var(--ink-dim);
+        letter-spacing: 0.1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="12"
+      data-width="1920"
+      data-height="1080"
+      data-fps="30"
+    >
+      <div id="glow"></div>
+      <div id="grid"></div>
+      <div id="vignette"></div>
+      <div id="progress-track"></div>
+      <div id="progress"></div>
+      <div id="stamp">HYPERFRAMES / 30FPS / 00:12</div>
+
+      <!-- 场景 1 -->
+      <div id="kicker" class="clip" data-start="0" data-duration="4" data-track-index="1">CODE · RENDER · VIDEO</div>
+      <div id="title" class="clip" data-start="0" data-duration="4" data-track-index="1">一句话，变成一条片子</div>
+      <div id="subtitle" class="clip" data-start="0" data-duration="4" data-track-index="1">
+        画面由代码算出来，文字、图表、数字全是矢量<br />
+        改一个词，重渲染一遍，不用重拍
+      </div>
+      <div id="hairline" class="clip" data-start="0.3" data-duration="3.7" data-track-index="2"></div>
+
+      <!-- 场景 2 -->
+      <div id="s2-head" class="clip" data-start="4" data-duration="4" data-track-index="1">STAGE 02 — STRUCTURE</div>
+      <div id="s2-title" class="clip" data-start="4" data-duration="4" data-track-index="1">把论点拆成看得见的结构</div>
+      <div id="s2-foot" class="clip" data-start="4" data-duration="4" data-track-index="3">
+        三方结构一旦成立，后面每句话都有了落点
+      </div>
+
+      <svg
+        id="diagram"
+        class="clip"
+        data-start="4"
+        data-duration="4"
+        data-track-index="2"
+        viewBox="0 0 1440 560"
+      >
+        <line id="link-a" class="link" x1="250" y1="280" x2="250" y2="280" />
+        <line id="link-b" class="link" x1="800" y1="280" x2="800" y2="280" />
+        <g id="node-left">
+          <circle class="node-core" cx="250" cy="280" r="112" />
+          <circle class="node-ring" cx="250" cy="280" r="112" />
+          <text class="node-label" x="250" y="296">人</text>
+          <text class="node-sub" x="250" y="446">提问者</text>
+        </g>
+        <g id="node-mid">
+          <rect class="node-core" x="640" y="196" width="160" height="168" />
+          <rect class="node-ring" x="640" y="196" width="160" height="168" />
+          <text class="node-label" x="720" y="298" style="font-size: 38px">对话</text>
+          <text class="node-sub" x="720" y="446">只有文字</text>
+        </g>
+        <g id="node-right">
+          <circle class="node-core" cx="1190" cy="280" r="112" />
+          <circle class="node-ring" cx="1190" cy="280" r="112" />
+          <text class="node-label" x="1190" y="296">机器</text>
+          <text class="node-sub" x="1190" y="446">回答者</text>
+        </g>
+      </svg>
+
+      <!-- 场景 3 -->
+      <div id="s3-quote" class="clip" data-start="8" data-duration="4" data-track-index="1">“能讲清楚，<br />是因为结构先立住了。”</div>
+      <div id="s3-sub" class="clip" data-start="8" data-duration="4" data-track-index="1">风格是外壳，结构才是骨架</div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // 常驻层：进度条贯穿全片（线性，不做缓动，避免时间感失真）
+      tl.fromTo("#progress", { scaleX: 0 }, { scaleX: 1, duration: 12, ease: "none" }, 0);
+
+      // 场景 1（0–4s）
+      tl.fromTo("#kicker", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 0);
+      tl.fromTo(
+        "#title",
+        { opacity: 0, y: 46, filter: "blur(10px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" },
+        0.2
+      );
+      tl.fromTo("#subtitle", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.95);
+      tl.fromTo("#hairline", { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: "power2.inOut" }, 1.1);
+      tl.to("#kicker", { opacity: 0, duration: 0.4, ease: "power2.in" }, 3.5);
+      tl.to("#title", { opacity: 0, y: -30, filter: "blur(8px)", duration: 0.5, ease: "power2.in" }, 3.5);
+      tl.to("#subtitle", { opacity: 0, y: -16, duration: 0.45, ease: "power2.in" }, 3.55);
+      tl.to("#hairline", { opacity: 0, duration: 0.4 }, 3.6);
+
+      // 场景 2（4–8s）
+      tl.fromTo("#s2-head", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 4.05);
+      tl.fromTo("#s2-title", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 4.15);
+      tl.fromTo(
+        "#node-left",
+        { opacity: 0, scale: 0.9, transformOrigin: "250px 280px" },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+        4.3
+      );
+      tl.fromTo(
+        "#node-mid",
+        { opacity: 0, scale: 0.9, transformOrigin: "720px 280px" },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+        4.5
+      );
+      tl.fromTo(
+        "#node-right",
+        { opacity: 0, scale: 0.9, transformOrigin: "1190px 280px" },
+        { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+        4.7
+      );
+      tl.fromTo("#link-a", { attr: { x2: 250 } }, { attr: { x2: 640 }, duration: 0.55, ease: "power2.inOut" }, 5.0);
+      tl.fromTo("#link-b", { attr: { x2: 800 } }, { attr: { x2: 1190 }, duration: 0.55, ease: "power2.inOut" }, 5.32);
+      tl.fromTo("#s2-foot", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 5.55);
+      tl.to("#diagram", { opacity: 0, duration: 0.45, ease: "power2.in" }, 7.35);
+      tl.to("#s2-head", { opacity: 0, duration: 0.4 }, 7.4);
+      tl.to("#s2-title", { opacity: 0, y: -20, duration: 0.45, ease: "power2.in" }, 7.4);
+      tl.to("#s2-foot", { opacity: 0, duration: 0.35 }, 7.45);
+
+      // 场景 3（8–12s）
+      tl.fromTo(
+        "#s3-quote",
+        { opacity: 0, filter: "blur(12px)", scale: 0.97 },
+        { opacity: 1, filter: "blur(0px)", scale: 1, duration: 1.0, ease: "power3.out" },
+        8.05
+      );
+      tl.fromTo("#s3-sub", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 8.7);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
